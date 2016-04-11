@@ -82,7 +82,7 @@ GameBoard::GameBoard(QWidget* parent) : QDialog(parent)
 void GameBoard::buttonClicked(int but)
 {
   qDebug() << "button " << but << "pressed";
-  bg01->button(but)->setText(QString("B %1").arg(but));
+  bg01->button(but)->setText(QString("X"));
 
   return;
 }
