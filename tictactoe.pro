@@ -9,7 +9,7 @@ QT += core
 QT += dbus
 QT += network
 
-TARGET = tictacktoe
+TARGET = tictactoe
 TEMPLATE = app
 target.path = /usr/bin/
 INSTALLS += target
