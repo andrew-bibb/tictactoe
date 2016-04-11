@@ -26,6 +26,8 @@ DEALINGS IN THE SOFTWARE.
 # include <QtCore/QDebug>
 # include <QList>
 # include <QString>
+# include <QMessageBox>
+# include <QTimer>
 
 # include "./code/gameboard/gameboard.h"	
 # include "./code/resource.h"
@@ -69,7 +71,7 @@ GameBoard::GameBoard(QWidget* parent) : QDialog(parent)
   connect (ui.pushButton_new, SIGNAL(clicked()), this, SLOT(initializeBoard()));
 
   // Initialize board
-  this->initializeBoard();
+  QTimer::singleShot(5, this, SLOT(initializeBoard()) );
 
 	return;
 }
@@ -94,6 +96,13 @@ void GameBoard::initializeBoard()
   for (int i = 0; i < blist.count(); ++i) {
     blist.at(i)->setText("");
   }
+
+ if (QMessageBox::question(this, LONG_NAME,
+          tr("Would you like to make the first move?"),
+          QMessageBox::Yes | QMessageBox::No,
+          QMessageBox::No) == QMessageBox::No) {
+   bg01->button(qrand() % 9 + 1)->click();
+ }
 
   return;
 }
