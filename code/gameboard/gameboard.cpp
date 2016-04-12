@@ -3,7 +3,7 @@ Main window which also handles all the controls.
 
 Copyright (C) 2014-2016
 by: Andrew J. Bibb
-License: MIT \
+License: MIT 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy 
 of this software and associated documentation files (the "Software"),to deal 
@@ -79,11 +79,12 @@ GameBoard::GameBoard(QWidget* parent) : QDialog(parent)
 /////////////////////////////// Private SLOTS ///////////////////////////////////
 //
 // Slot to process button clicks
-void GameBoard::buttonClicked(int but)
+void GameBoard::buttonClicked( int but)
 {
-  qDebug() << "button " << but << "pressed";
-  bg01->button(but)->setText(QString("X"));
-
+  bg01->button(but)->setText(QString(cur_player.toUpper()) );
+  game[but] = cur_player; 
+  cur_player = (cur_player == QChar('x') ? QChar('o') : QChar('x') );
+  
   return;
 }
 
@@ -91,18 +92,29 @@ void GameBoard::buttonClicked(int but)
 // Slot to initialize the board
 void GameBoard::initializeBoard()
 {
+  
+  // initialize variables
+  cur_player = QChar('x');
+  for (uint i = 0; i < sizeof(game)/sizeof(QChar); ++i) { 
+    game[i] = QChar();
+  }
+  
+  // initialize the board 
   QList<QAbstractButton*> blist = bg01->buttons();
 
   for (int i = 0; i < blist.count(); ++i) {
     blist.at(i)->setText("");
   }
 
- if (QMessageBox::question(this, LONG_NAME,
+  // decide who goes first
+  if (QMessageBox::question(this, LONG_NAME,
           tr("Would you like to make the first move?"),
           QMessageBox::Yes | QMessageBox::No,
-          QMessageBox::No) == QMessageBox::No) {
-   bg01->button(qrand() % 9 + 1)->click();
- }
+          QMessageBox::Yes) == QMessageBox::No) {
+    int move = qrand() % 9 + 1;
+    game[move] = cur_player;
+    bg01->button(move)->click();
+  }
 
   return;
 }

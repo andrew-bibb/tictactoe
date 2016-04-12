@@ -35,13 +35,13 @@
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <property name="leftMargin">
-      <number>19</number>
+      <number>5</number>
      </property>
      <property name="topMargin">
-      <number>19</number>
+      <number>5</number>
      </property>
      <property name="rightMargin">
-      <number>19</number>
+      <number>5</number>
      </property>
      <property name="bottomMargin">
       <number>19</number>
@@ -59,14 +59,14 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="font">
@@ -97,14 +97,14 @@ border-color: black;
        </property>
        <property name="minimumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>109</width>
+         <height>91</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>109</width>
+         <height>91</height>
         </size>
        </property>
        <property name="font">
@@ -135,14 +135,14 @@ border-color: black;
        </property>
        <property name="minimumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="font">
@@ -177,14 +177,14 @@ border-color: black;
        </property>
        <property name="minimumSize">
         <size>
-         <width>99</width>
-         <height>87</height>
+         <width>109</width>
+         <height>91</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>99</width>
-         <height>87</height>
+         <width>109</width>
+         <height>91</height>
         </size>
        </property>
        <property name="font">
@@ -216,14 +216,14 @@ border-color: black;
        </property>
        <property name="minimumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>109</width>
+         <height>91</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>109</width>
+         <height>91</height>
         </size>
        </property>
        <property name="font">
@@ -255,14 +255,14 @@ border-color: black;
        </property>
        <property name="minimumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="font">
@@ -293,14 +293,14 @@ border-color: black;
        </property>
        <property name="minimumSize">
         <size>
-         <width>99</width>
-         <height>87</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>99</width>
-         <height>87</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="font">
@@ -332,14 +332,14 @@ border-color: black;
        </property>
        <property name="minimumSize">
         <size>
-         <width>99</width>
-         <height>87</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>99</width>
-         <height>87</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="font">
@@ -370,14 +370,14 @@ border-color: black;
        </property>
        <property name="minimumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>99</width>
-         <height>86</height>
+         <width>108</width>
+         <height>91</height>
         </size>
        </property>
        <property name="font">

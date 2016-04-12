@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 
 # include <QDialog>
 # include <QButtonGroup>
+# include <QChar>
 
 # include "ui_gameboard.h"
 
@@ -46,7 +47,8 @@ class GameBoard : public QDialog
   // members 
     Ui::GameBoard ui;    
     QButtonGroup* bg01;    
-
+    QChar cur_player;
+    QChar game[9];
 };
 
 # endif
