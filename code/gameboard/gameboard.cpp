@@ -79,10 +79,13 @@ GameBoard::GameBoard(QWidget* parent) : QDialog(parent)
 /////////////////////////////// Private SLOTS ///////////////////////////////////
 //
 // Slot to process button clicks
-void GameBoard::buttonClicked( int but)
+void GameBoard::buttonClicked(int but)
 {
   bg01->button(but)->setText(QString(cur_player.toUpper()) );
-  game[but] = cur_player; 
+  game[but - 1] = cur_player; 
+
+  
+  qDebug() << "game over = " << gameOver(cur_player);
   cur_player = (cur_player == QChar('x') ? QChar('o') : QChar('x') );
   
   return;
@@ -111,10 +114,36 @@ void GameBoard::initializeBoard()
           tr("Would you like to make the first move?"),
           QMessageBox::Yes | QMessageBox::No,
           QMessageBox::Yes) == QMessageBox::No) {
-    int move = qrand() % 9 + 1;
+    int move = qrand() % 9;
     game[move] = cur_player;
-    bg01->button(move)->click();
+    bg01->button(move + 1)->click();
   }
 
   return;
+}
+
+/////////////////////////////// Private Functions ///////////////////////////////////
+//
+// Function to determine if the game is over
+bool GameBoard::gameOver(const QChar& player)
+{
+  // check rows
+  for (int i = 0; i < 9; i = i + 3) {
+    if (game[i] == player && game[i + 1] == player && game[i + 2] == player)
+      return true;
+  } // rows
+
+  // check columns
+  for (int i = 0; i < 3; ++i) {
+    if (game[i] == player && game[i + 3] == player && game[i + 6] == player)
+      return true;
+  } // columns
+    
+  // check diagonals
+  if (game[0] == player && game[4] == player && game[8]  == player)
+    return true;
+  if (game[2] == player && game[4] == player && game[6] == player)
+    return true;
+
+  return false;
 }

@@ -49,6 +49,9 @@ class GameBoard : public QDialog
     QButtonGroup* bg01;    
     QChar cur_player;
     QChar game[9];
+     
+  // functions
+   bool gameOver(const QChar&);
 };
 
 # endif
