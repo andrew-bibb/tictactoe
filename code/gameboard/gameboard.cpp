@@ -1,4 +1,4 @@
-/**************************** playerctl.cpp ****************************
+/**************************** gameboard.cpp ****************************
 Main window which also handles all the controls.
 
 Copyright (C) 2014-2016
@@ -81,23 +81,30 @@ GameBoard::GameBoard(QWidget* parent) : QDialog(parent)
 // Slot to process button clicks
 void GameBoard::buttonClicked(int but)
 {
-  bg01->button(but)->setText(QString(cur_player.toUpper()) );
-  game[but - 1] = cur_player; 
+  // Return now if not the human turn
+  if (! b_humanturn) return;
 
+  // Return if invalid button picked
+  if (! game[but - 1].isNull() ) return;
+
+  // process the move
+  bg01->button(but)->setText(QString(human.toUpper()) );
+  game[but - 1] = human; 
   
-  qDebug() << "game over = " << gameOver(cur_player);
-  cur_player = (cur_player == QChar('x') ? QChar('o') : QChar('x') );
-  
+  checkGameOver();
+  b_humanturn = false;
+  computerMove();
   return;
 }
 
 //
 // Slot to initialize the board
+// Called from constructor and whenever a new game is started.
 void GameBoard::initializeBoard()
 {
   
   // initialize variables
-  cur_player = QChar('x');
+  b_humanturn = false;
   for (uint i = 0; i < sizeof(game)/sizeof(QChar); ++i) { 
     game[i] = QChar();
   }
@@ -113,37 +120,91 @@ void GameBoard::initializeBoard()
   if (QMessageBox::question(this, LONG_NAME,
           tr("Would you like to make the first move?"),
           QMessageBox::Yes | QMessageBox::No,
-          QMessageBox::Yes) == QMessageBox::No) {
-    int move = qrand() % 9;
-    game[move] = cur_player;
-    bg01->button(move + 1)->click();
+          QMessageBox::Yes) == QMessageBox::Yes) {
+    human = QChar('x');
+    computer = QChar('o');
+    b_humanturn = true;
   }
+  else {
+    computer = QChar('x');
+    human = QChar('o');
+    int move = qrand() % 9;
+    bg01->button(move + 1)->setText(computer.toUpper() );
+    game[move] = computer; 
+    b_humanturn = true;
+
+  } // else
 
   return;
 }
 
 /////////////////////////////// Private Functions ///////////////////////////////////
 //
-// Function to determine if the game is over
-bool GameBoard::gameOver(const QChar& player)
+// Function for the computer to calculate a move
+void GameBoard::computerMove()
+{
+  qDebug() << "thinking...";
+
+  checkGameOver();
+  b_humanturn = true;
+  return;
+}
+
+//
+// Function to score the game
+int GameBoard::scoreGame(const QChar cgame[], const int& depth) 
+{
+  if (gameWin(cgame, computer) ) return 10 - depth;
+  if (gameWin(cgame, human) ) return depth -10;
+
+  return 0;
+}
+
+//
+// Function to determine if the game was won by player
+bool GameBoard::gameWin(const QChar cgame[], const QChar& player)
 {
   // check rows
   for (int i = 0; i < 9; i = i + 3) {
-    if (game[i] == player && game[i + 1] == player && game[i + 2] == player)
+    if (cgame[i] == player && cgame[i + 1] == player && cgame[i + 2] == player)
       return true;
   } // rows
 
   // check columns
   for (int i = 0; i < 3; ++i) {
-    if (game[i] == player && game[i + 3] == player && game[i + 6] == player)
+    if (cgame[i] == player && cgame[i + 3] == player && cgame[i + 6] == player)
       return true;
   } // columns
     
   // check diagonals
-  if (game[0] == player && game[4] == player && game[8]  == player)
+  if (cgame[0] == player && cgame[4] == player && cgame[8]  == player)
     return true;
-  if (game[2] == player && game[4] == player && game[6] == player)
+  if (cgame[2] == player && cgame[4] == player && cgame[6] == player)
     return true;
 
   return false;
+}
+
+//
+// Function to check if the game is over
+void GameBoard::checkGameOver()
+{
+  
+  if (gameWin(game, human)) {
+    qDebug() << "This cannot happen, the human won";
+    initializeBoard();
+  }
+
+  if (gameWin(game, computer) ) {
+    qDebug() << "Yea - I won!";
+    initializeBoard();
+  }
+
+  for (int i = 0; i < 9; ++i) {
+    if (game[i].isNull() ) return;
+  }
+  qDebug() << "We have a draw";
+  initializeBoard();
+
+  return;
 }

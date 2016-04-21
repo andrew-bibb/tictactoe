@@ -47,11 +47,17 @@ class GameBoard : public QDialog
   // members 
     Ui::GameBoard ui;    
     QButtonGroup* bg01;    
-    QChar cur_player;
+    QChar computer;
+    QChar human;
     QChar game[9];
+    bool b_humanturn;
      
   // functions
-   bool gameOver(const QChar&);
+   void computerMove();
+   int scoreGame(const QChar[], const int&);
+   bool gameWin(const QChar[], const QChar&);
+   void checkGameOver();
+
 };
 
 # endif
