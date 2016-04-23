@@ -51,12 +51,14 @@ class GameBoard : public QDialog
     QChar human;
     QChar game[9];
     bool b_humanturn;
+    int choice;
      
   // functions
    void computerMove();
-   int scoreGame(const QChar[], const int&);
+   int miniMax(const QChar[], int);
    bool gameWin(const QChar[], const QChar&);
-   void checkGameOver();
+   bool gameDraw(const QChar[]);
+   void processEndOfGame();
 
 };
 

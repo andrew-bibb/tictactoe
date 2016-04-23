@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 # include <QString>
 # include <QMessageBox>
 # include <QTimer>
+# include <QMap>
 
 # include "./code/gameboard/gameboard.h"	
 # include "./code/resource.h"
@@ -91,7 +92,7 @@ void GameBoard::buttonClicked(int but)
   bg01->button(but)->setText(QString(human.toUpper()) );
   game[but - 1] = human; 
   
-  checkGameOver();
+  processEndOfGame();
   b_humanturn = false;
   computerMove();
   return;
@@ -105,6 +106,7 @@ void GameBoard::initializeBoard()
   
   // initialize variables
   b_humanturn = false;
+  choice = -1;
   for (uint i = 0; i < sizeof(game)/sizeof(QChar); ++i) { 
     game[i] = QChar();
   }
@@ -143,21 +145,60 @@ void GameBoard::initializeBoard()
 // Function for the computer to calculate a move
 void GameBoard::computerMove()
 {
-  qDebug() << "thinking...";
 
-  checkGameOver();
+  miniMax(game, -1);
+  bg01->button(choice + 1)->setText(computer.toUpper() );
+  game[choice] = computer;
+
+  processEndOfGame();
   b_humanturn = true;
   return;
 }
 
 //
-// Function to score the game
-int GameBoard::scoreGame(const QChar cgame[], const int& depth) 
-{
+// Minimax function
+int GameBoard::miniMax(const QChar cgame[], int depth)
+{ 
+  // Return score if this branch is done
   if (gameWin(cgame, computer) ) return 10 - depth;
-  if (gameWin(cgame, human) ) return depth -10;
+  if (gameWin(cgame, human) ) return depth - 10;
+  if (gameDraw(cgame) ) return 0;
 
-  return 0;
+  // Initialize variables
+  ++depth;
+  QMap<int, int> map_result;
+  QChar cur_player = ((depth + 2) % 2 == 1 ?  human:  computer); 
+  // Find and score all possible moves, recurse as needed
+  for (int i = 0; i < 9; ++i) {
+    if (cgame[i].isNull() ) {
+      QChar pgame[9];
+      for (int j = 0; j < 9; ++j) {
+        pgame[j] = cgame[j];
+      } // j for
+      pgame[i] = cur_player;
+      map_result[i] = miniMax(pgame, depth);
+    } // if move is valid
+  } // i for
+
+  // Find the move out of the min or max values
+  int score = (cur_player == computer ? -20 : 20);
+  QMapIterator<int, int> itr(map_result);
+  while (itr.hasNext()) {
+    itr.next();
+    if (cur_player == computer) { 
+      if (itr.value() >= score) {
+        score = itr.value();
+        choice = itr.key();
+      } // if
+    } // if computer
+    else {
+      if (itr.value() <= score) {
+        score = itr.value();
+        choice = itr.key();
+      } // if
+    } // else
+  } // while
+  return score;
 }
 
 //
@@ -186,25 +227,35 @@ bool GameBoard::gameWin(const QChar cgame[], const QChar& player)
 }
 
 //
+// Function to see if the game is a draw
+bool GameBoard::gameDraw(const QChar cgame[])
+{
+  for (int i = 0; i < 9; ++i) {
+    if (cgame[i].isNull() ) return false;
+  }
+  
+  return true;
+}
+
+//
 // Function to check if the game is over
-void GameBoard::checkGameOver()
+void GameBoard::processEndOfGame()
 {
   
   if (gameWin(game, human)) {
     qDebug() << "This cannot happen, the human won";
-    initializeBoard();
+   // initializeBoard();
   }
 
   if (gameWin(game, computer) ) {
     qDebug() << "Yea - I won!";
-    initializeBoard();
+    //initializeBoard();
   }
 
-  for (int i = 0; i < 9; ++i) {
-    if (game[i].isNull() ) return;
-  }
-  qDebug() << "We have a draw";
-  initializeBoard();
-
+  if (gameDraw(game) ) {
+    qDebug() << "We have a draw";
+  //initializeBoard();
+}
   return;
+  
 }
