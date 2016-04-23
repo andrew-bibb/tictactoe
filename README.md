@@ -1,8 +1,5 @@
 # Tic Tac Toe
-A tic-tac-toe game with a QT user interface.
+An unbeatable tic-tac-toe game with a QT user interface.  This program uses the minimax algorithm to calculate the computers best move.  This makes it unbeatable.  You may draw, but you will not win.
 
-NOTE: If you are reading this the program is not done.
-
-The primary purpose of this program is for me to learn vim.  All the editing is
-is being done using vim.  When I'm finished hopefully I'll be efficient programming
-in vim and also have an unbeatable tic-tac-toe game.
+Note:
+I am aware that the world hardly needs another tic-tac-toe game.  I wanted to learn how to use VIM and the only way to do that is to use it.  This program I thought would be about the right size to use for this learning experience.  
