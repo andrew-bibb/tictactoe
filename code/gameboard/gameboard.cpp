@@ -37,13 +37,13 @@ GameBoard::GameBoard(QWidget* parent) : QDialog(parent)
 {
 	// Set the Locale (probably not necessary since the default is the system one anyway)
   QLocale::setDefault(QLocale::system() );	
-	
-	// Set the window title
-	this->setWindowTitle(LONG_NAME);
-	
+
 	// Setup the user interface
   ui.setupUi(this);	
 
+  // Set the window title
+	this->setWindowTitle(LONG_NAME);
+  
   // Setup the button group
   bg01 = new QButtonGroup(this);
   bg01->addButton(ui.pushButton_01, 1);
@@ -137,6 +137,7 @@ void GameBoard::initializeBoard()
 
   } // else
 
+  ui.label_human_playing->setText(tr("You are playing: <b>%1</b>").arg(human.toUpper()));
   return;
 }
 
