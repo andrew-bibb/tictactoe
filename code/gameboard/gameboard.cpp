@@ -79,7 +79,7 @@ GameBoard::GameBoard(QWidget* parent) : QDialog(parent)
 
 /////////////////////////////// Private SLOTS ///////////////////////////////////
 //
-// Slot to process button clicks
+// Slot to process button clicks (the human's move)
 void GameBoard::buttonClicked(int but)
 {
   // Return now if not the human turn
@@ -134,7 +134,6 @@ void GameBoard::initializeBoard()
     bg01->button(move + 1)->setText(computer.toUpper() );
     game[move] = computer; 
     b_humanturn = true;
-
   } // else
 
   ui.label_human_playing->setText(tr("You are playing: <b>%1</b>").arg(human.toUpper()));
@@ -157,10 +156,13 @@ void GameBoard::computerMove()
 }
 
 //
-// Minimax function
+// Minimax function - recursive function used to find the best move for the computer.
 int GameBoard::miniMax(const QChar cgame[], int depth)
 { 
-  // Return score if this branch is done
+  // Return score if this branch is done.  This score check
+  // is only for use in this recursive function.  It does not
+  // check or determine the state of the game actually being
+  // played.  
   if (gameWin(cgame, computer) ) return 10 - depth;
   if (gameWin(cgame, human) ) return depth - 10;
   if (gameDraw(cgame) ) return 0;
@@ -205,6 +207,7 @@ int GameBoard::miniMax(const QChar cgame[], int depth)
 //
 // Function to determine if the game was won by player
 bool GameBoard::gameWin(const QChar cgame[], const QChar& player)
+
 {
   // check rows
   for (int i = 0; i < 9; i = i + 3) {
@@ -239,10 +242,9 @@ bool GameBoard::gameDraw(const QChar cgame[])
 }
 
 //
-// Function to check if the game is over
+// Function to process end of game code.
 void GameBoard::processEndOfGame()
 {
-  
   if (gameWin(game, human)) {
     qDebug() << "This cannot happen, the human won";
    // initializeBoard();
@@ -254,9 +256,15 @@ void GameBoard::processEndOfGame()
   }
 
   if (gameDraw(game) ) {
-    qDebug() << "We have a draw";
-  //initializeBoard();
-}
+    if (QMessageBox::question(this, LONG_NAME,
+          tr("Game is a draw. Would you like to play again?"),
+          QMessageBox::Yes | QMessageBox::No,
+          QMessageBox::Yes) == QMessageBox::Yes) 
+      initializeBoard();
+    else
+      qApp->quit();
+  } // if game is draw
+   
   return;
-  
-}
+}  
+
