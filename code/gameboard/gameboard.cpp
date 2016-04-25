@@ -110,7 +110,10 @@ void GameBoard::initializeBoard()
   for (uint i = 0; i < sizeof(game)/sizeof(QChar); ++i) { 
     game[i] = QChar();
   }
-  
+  for (int j = 0; j < 3; ++j) {
+    win[j] = -1;
+  }
+
   // initialize the board 
   QList<QAbstractButton*> blist = bg01->buttons();
 
@@ -206,26 +209,49 @@ int GameBoard::miniMax(const QChar cgame[], int depth)
 
 //
 // Function to determine if the game was won by player
-bool GameBoard::gameWin(const QChar cgame[], const QChar& player)
-
+bool GameBoard::gameWin(const QChar cgame[], const QChar& player, bool record)
 {
   // check rows
   for (int i = 0; i < 9; i = i + 3) {
-    if (cgame[i] == player && cgame[i + 1] == player && cgame[i + 2] == player)
+    if (cgame[i] == player && cgame[i + 1] == player && cgame[i + 2] == player) {
+      if (record) {
+        win[0] = i;
+        win[1] = i + 1;
+        win[2] = i + 2;
+      }
       return true;
+    }
   } // rows
 
   // check columns
   for (int i = 0; i < 3; ++i) {
-    if (cgame[i] == player && cgame[i + 3] == player && cgame[i + 6] == player)
+    if (cgame[i] == player && cgame[i + 3] == player && cgame[i + 6] == player) {
+      if (record) {
+        win[0] = i;
+        win[1] = i + 3;
+        win[2] = i + 6;
+      }
+    }
       return true;
   } // columns
     
   // check diagonals
-  if (cgame[0] == player && cgame[4] == player && cgame[8]  == player)
+  if (cgame[0] == player && cgame[4] == player && cgame[8]  == player) {
+    if (record) {
+      win[0] = 0;
+      win[1] = 4;
+      win[2] = 8;
+    }
+  }
     return true;
-  if (cgame[2] == player && cgame[4] == player && cgame[6] == player)
-    return true;
+  if (cgame[2] == player && cgame[4] == player && cgame[6] == player) {
+    if (record) {
+      win[0] = 2;
+      win[1] = 4;
+      win[2] = 6;
+    }
+  return true;
+  }
 
   return false;
 }

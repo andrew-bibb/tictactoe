@@ -61,7 +61,10 @@ int main(int argc, char *argv[])
 	// setup the command line parser
 	QCommandLineParser parser;
   parser.addHelpOption();  	
-  parser.addVersionOption();	  
+  parser.addVersionOption();
+ 
+  QCommandLineOption kobayashiMaru (QStringList() << "k" << "kobayashi-maru", QCoreApplication::translate("main.cpp", "Allow computer to make mistakes") );
+	parser.addOption(kobayashiMaru);		  
     
   // Process comand line arguments
   parser.process(QCoreApplication::arguments() );   
