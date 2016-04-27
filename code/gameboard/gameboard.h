@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE.
 # include <QDialog>
 # include <QButtonGroup>
 # include <QChar>
+# include <QTimer>
 
 # include "ui_gameboard.h"
 
@@ -42,6 +43,7 @@ class GameBoard : public QDialog
   private slots:
     void buttonClicked(int);
     void initializeBoard();
+    void blinkWin();
 
   private:
   // members 
@@ -53,6 +55,7 @@ class GameBoard : public QDialog
     int win[3];
     bool b_humanturn;
     int choice;
+    QTimer* blinktimer;
      
   // functions
    void computerMove();

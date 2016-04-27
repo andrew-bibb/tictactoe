@@ -67,9 +67,13 @@ GameBoard::GameBoard(QWidget* parent) : QDialog(parent)
   this->addAction(ui.actionButton08);
   this->addAction(ui.actionButton09);
   
+  //  Blink timer
+  blinktimer = new QTimer(this);
+
   // Connect signals and slots
   connect (bg01, SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
   connect (ui.pushButton_new, SIGNAL(clicked()), this, SLOT(initializeBoard()));
+  connect (blinktimer, SIGNAL(timeout()), this, SLOT(blinkWin()));
 
   // Initialize board
   QTimer::singleShot(5, this, SLOT(initializeBoard()) );
@@ -92,10 +96,11 @@ void GameBoard::buttonClicked(int but)
   bg01->button(but)->setText(QString(human.toUpper()) );
   game[but - 1] = human; 
   
-  processEndOfGame();
   b_humanturn = false;
+  processEndOfGame();
   computerMove();
-  return;
+ 
+ return;
 }
 
 //
@@ -103,13 +108,15 @@ void GameBoard::buttonClicked(int but)
 // Called from constructor and whenever a new game is started.
 void GameBoard::initializeBoard()
 {
-  
   // initialize variables
   b_humanturn = false;
+  blinktimer->stop();
+
   choice = -1;
   for (uint i = 0; i < sizeof(game)/sizeof(QChar); ++i) { 
     game[i] = QChar();
   }
+  
   for (int j = 0; j < 3; ++j) {
     win[j] = -1;
   }
@@ -143,6 +150,26 @@ void GameBoard::initializeBoard()
   return;
 }
 
+//
+// Slot to blink the winning cells
+// Called from the blinktimer
+void GameBoard::blinkWin()
+{ 
+  // b_humanturn has already been changed by the time this slot is called
+  // that is why the assignment seems to be backward.
+  QChar blinkchar;
+  if (b_humanturn) blinkchar = computer.toUpper();
+  else blinkchar = human.toUpper();
+
+  for (int i = 0; i < 3; ++i) {
+    if (bg01->button(win[i] + 1)->text() == blinkchar)
+      bg01->button(win[i] + 1)->setText("");
+    else bg01->button(win[i] + 1)->setText(blinkchar);
+  }
+
+  return;
+}
+
 /////////////////////////////// Private Functions ///////////////////////////////////
 //
 // Function for the computer to calculate a move
@@ -153,8 +180,9 @@ void GameBoard::computerMove()
   bg01->button(choice + 1)->setText(computer.toUpper() );
   game[choice] = computer;
 
-  processEndOfGame();
   b_humanturn = true;
+  processEndOfGame();
+
   return;
 }
 
@@ -218,7 +246,7 @@ bool GameBoard::gameWin(const QChar cgame[], const QChar& player, bool record)
         win[0] = i;
         win[1] = i + 1;
         win[2] = i + 2;
-      }
+      } 
       return true;
     }
   } // rows
@@ -230,27 +258,28 @@ bool GameBoard::gameWin(const QChar cgame[], const QChar& player, bool record)
         win[0] = i;
         win[1] = i + 3;
         win[2] = i + 6;
-      }
-    }
+      } 
       return true;
+    }
   } // columns
     
   // check diagonals
   if (cgame[0] == player && cgame[4] == player && cgame[8]  == player) {
-    if (record) {
+     if (record) {
       win[0] = 0;
       win[1] = 4;
       win[2] = 8;
-    }
-  }
+    } 
     return true;
+  }
+
   if (cgame[2] == player && cgame[4] == player && cgame[6] == player) {
-    if (record) {
+     if (record) {
       win[0] = 2;
       win[1] = 4;
       win[2] = 6;
-    }
-  return true;
+    } 
+    return true;
   }
 
   return false;
@@ -271,14 +300,19 @@ bool GameBoard::gameDraw(const QChar cgame[])
 // Function to process end of game code.
 void GameBoard::processEndOfGame()
 {
-  if (gameWin(game, human)) {
-    qDebug() << "This cannot happen, the human won";
-   // initializeBoard();
+  // constants
+  const int interval = 350; // blink interval in milliseconds
+
+  if (gameWin(game, human, true)) {
+    ui.label_human_playing->setText(tr("Congragulations - you win"));
+    blinktimer->start(interval);
+    return;
   }
 
-  if (gameWin(game, computer) ) {
-    qDebug() << "Yea - I won!";
-    //initializeBoard();
+  if (gameWin(game, computer, true) ) {
+    ui.label_human_playing->setText(tr("I Won!!"));
+    blinktimer->start(interval);
+    return;
   }
 
   if (gameDraw(game) ) {
