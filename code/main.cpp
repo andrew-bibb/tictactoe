@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
   // signal handler             
   signal(SIGINT, signalhandler); 
   
-  GameBoard gbrd(NULL);
+  GameBoard gbrd(parser, NULL);
   gbrd.show();
    
   return app.exec();

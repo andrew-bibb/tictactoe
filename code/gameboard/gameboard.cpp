@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 # include "./code/gameboard/gameboard.h"	
 # include "./code/resource.h"
 
-GameBoard::GameBoard(QWidget* parent) : QDialog(parent)
+GameBoard::GameBoard(const QCommandLineParser& parser, QWidget* parent) : QDialog(parent)
 {
 	// Set the Locale (probably not necessary since the default is the system one anyway)
   QLocale::setDefault(QLocale::system() );	
@@ -70,6 +70,9 @@ GameBoard::GameBoard(QWidget* parent) : QDialog(parent)
   //  Blink timer
   blinktimer = new QTimer(this);
 
+  // Commandline options
+  b_kobayashimaru = parser.isSet("kobayashi-maru");
+
   // Connect signals and slots
   connect (bg01, SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)));
   connect (ui.pushButton_new, SIGNAL(clicked()), this, SLOT(initializeBoard()));
@@ -96,9 +99,13 @@ void GameBoard::buttonClicked(int but)
   bg01->button(but)->setText(QString(human.toUpper()) );
   game[but - 1] = human; 
   
-  b_humanturn = false;
-  processEndOfGame();
-  computerMove();
+  if (gameWin(game, human) || gameDraw(game) ) {
+    processEndOfGame();
+  }
+  else {
+    b_humanturn = false;
+    computerMove();
+  }
  
  return;
 }
@@ -155,11 +162,9 @@ void GameBoard::initializeBoard()
 // Called from the blinktimer
 void GameBoard::blinkWin()
 { 
-  // b_humanturn has already been changed by the time this slot is called
-  // that is why the assignment seems to be backward.
   QChar blinkchar;
-  if (b_humanturn) blinkchar = computer.toUpper();
-  else blinkchar = human.toUpper();
+  if (b_humanturn) blinkchar = human.toUpper();
+  else blinkchar = computer.toUpper();
 
   for (int i = 0; i < 3; ++i) {
     if (bg01->button(win[i] + 1)->text() == blinkchar)
@@ -176,12 +181,28 @@ void GameBoard::blinkWin()
 void GameBoard::computerMove()
 {
 
+  // run miniMax to find the best move
   miniMax(game, -1);
+
+  // choice now contains the best move, if we're running
+  // kobayashimaru we may not want to use it
+  const int cutoff = 3;
+  if (b_kobayashimaru && (qrand() % 10) < cutoff) {
+    for (int i = 0; i < 9; ++i) {
+      if (game[i].isNull() ) {
+        choice = i;
+        break;
+      } // if
+    } // for
+  } //if
+
   bg01->button(choice + 1)->setText(computer.toUpper() );
   game[choice] = computer;
 
-  b_humanturn = true;
-  processEndOfGame();
+  if (gameWin(game, computer) || gameDraw(game) ) 
+    processEndOfGame();
+  else
+    b_humanturn = true;
 
   return;
 }
@@ -304,7 +325,7 @@ void GameBoard::processEndOfGame()
   const int interval = 350; // blink interval in milliseconds
 
   if (gameWin(game, human, true)) {
-    ui.label_human_playing->setText(tr("Congragulations - you win"));
+    ui.label_human_playing->setText(tr("Congratulations - You Win!"));
     blinktimer->start(interval);
     return;
   }
