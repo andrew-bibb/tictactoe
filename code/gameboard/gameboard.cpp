@@ -189,7 +189,7 @@ void GameBoard::computerMove()
   const int cutoff = 3;
   if (b_kobayashimaru && (qrand() % 10) < cutoff) {
     for (int i = 0; i < 9; ++i) {
-      if (game[i].isNull() ) {
+      if (game[i].isNull() && i != choice) {
         choice = i;
         break;
       } // if
