@@ -186,7 +186,7 @@ void GameBoard::computerMove()
 
   // choice now contains the best move, if we're running
   // kobayashimaru we may not want to use it
-  const int cutoff = 3;
+  const int cutoff = 2;
   if (b_kobayashimaru && (qrand() % 10) < cutoff) {
     for (int i = 0; i < 9; ++i) {
       if (game[i].isNull() && i != choice) {
